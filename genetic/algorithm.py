@@ -6,15 +6,15 @@ class GeneticAlgorithm:
     def __init__(
         self,
         tsp : TravellingSalesperson,
-        select : function,
+        selection : function,
         crossover : function,
         mutation : function,
         **kwargs,
     ):
         self.tsp = tsp
-        self.select = select
+        self.select = selection
         self.crossover = crossover
-        self.mutation = mutation
+        self.mutate = mutation
         
         self.pop_size = (kwargs.get('pop_size')
             if kwargs.get('pop_size') is not None else 100)
@@ -55,13 +55,35 @@ class GeneticAlgorithm:
         
         self.pop = self.tsp.gen_random_pop(100)
         
+        n_crossovers = (self.crossover_prob * self.pop_size) // 2
+        n_elitism = self.elitism_ratio * self.pop_size
+        
+        
         while(not self.should_stop()):
-            # fitness
+            # Get fitness
             self.fit = np.asarray([self.tsp.fitness(perm)
                                for perm in self.pop])
-            # select
-            # crossover
-            # mutation
+            
+            temp_fit = self.fit[:]
+            temp_pop = self.pop[:]
+            new_pop = list()
+            for _ in range(n_crossovers):
+                # Selection
+                idx_parent1, idx_parent2 = self.select(temp_fit, 2)
+                
+                # Crossover w/ replacement
+                offspring1, offspring2 = self.crossover(temp_pop[idx_parent1], temp_pop[idx_parent2])
+                temp_pop.delete([idx_parent1, idx_parent2])
+                temp_fit.delete([idx_parent1, idx_parent2])
+                
+                # Mutation on offsprings
+                offspring1 = self.mutate(offspring1)
+                offspring2 = self.mutate(offspring2)
+                
+                new_pop.append([offspring1, offspring2])
+                #implementar elitismo
+            
+            
             # avaliar pop gerada p/ crossover e mutation?
     
 
