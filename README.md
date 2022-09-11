@@ -1,0 +1,17 @@
+Teoria:
+- Problema do Caxeiro Viajante:
+  - https://en.wikipedia.org/wiki/Travelling_salesman_problem
+  - 
+- Algoritmo genético:
+  - https://cs.gmu.edu/~sean/book/metaheuristics/Essentials.pdf
+  - https://towardsdatascience.com/evolution-of-a-salesman-a-complete-genetic-algorithm-tutorial-for-python-6fe5d2b3ca35
+  - https://www.researchgate.net/publication/245746380_Genetic_Algorithm_Solution_of_the_TSP_Avoiding_Special_Crossover_and_Mutation
+  - https://www.researchgate.net/publication/345339544_A_Comparison_of_GA_Crossover_and_Mutation_Methods_for_the_Traveling_Salesman_Problem
+  - 
+- Problemas:
+  - http://vrp.atd-lab.inf.puc-rio.br/attachments/article/6/TSPLIB%2095.pdf
+  - https://github.com/pdrozdowski/TSPLib.Net/blob/master/TSPLIB95/tsp/
+  -
+- Visualização:
+  - https://www.scottcondron.com/jupyter/optimisation/visualisation/2020/07/20/interactive-genetic-algorithm-dashboard-from-scratch-in-python.html
+  - 
