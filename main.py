@@ -1,4 +1,13 @@
-import numpy as np
-from permutation import natural_ordering_pair as nat
-import holoviews as hv
+from problem import TravellingSalesperson
+from genetic.algorithm import GeneticAlgorithm
+from genetic.selection import wheel
 
+tsp = TravellingSalesperson('instances/test.txt')
+algorithm = GeneticAlgorithm(
+    tsp,
+    wheel,
+    # crossover
+    # mutation
+)
+
+algorithm.run()

@@ -16,20 +16,20 @@ class TravellingSalesperson():
         
         if self.encoding == 'permutation':
             self.fitness = self.dec_permutation
+            self.get_random_pop = self.random_pop_permutation
         else: 
             raise ValueError(f'Encoding {encoding} not available.')
     
     
-    def gen_random_pop(self, size : int):
+    def random_pop_permutation(self, size : int) -> np.ndarray:
         return np.asarray([np.random.permutation(len(self.vertexes)) 
                           for _ in range(size)])
     
     
     def dec_permutation(self, perm : np.ndarray):
-        return np.sum([self.edges[nat(v1, v2)]
+        return np.sum([self.edges.get(nat(v1, v2), 0)
                        for v1, v2 in zip(perm, perm[1:])]) +\
-                           self.edges[nat(perm[0], perm[-1])]
-    
+                           self.edges.get(nat(perm[0], perm[-1], 0))
     
     def __repr__(self):
         return f'''

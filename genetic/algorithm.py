@@ -16,17 +16,17 @@ class GeneticAlgorithm:
         self.crossover = crossover
         self.mutation = mutation
         
-        self.pop_size = kwargs.get('pop_size')\
-            if kwargs.get('pop_size') is not None else 100
+        self.pop_size = (kwargs.get('pop_size')
+            if kwargs.get('pop_size') is not None else 100)
             
-        self.crossover_prob = kwargs.get('crossover_prob')\
-            if kwargs.get('crossover_prob') is not None else 0.5
+        self.crossover_prob = (kwargs.get('crossover_prob')
+            if kwargs.get('crossover_prob') is not None else 0.5)
             
-        self.mutation_prob = kwargs.get('mutation_prob')\
-            if kwargs.get('mutation_prob') is not None else 0.01
+        self.mutation_prob = (kwargs.get('mutation_prob')
+            if kwargs.get('mutation_prob') is not None else 0.01)
             
-        self.elitism_ratio = kwargs.get('elitism_ratio')\
-            if kwargs.get('elitism_ratio') is not None else 0.1
+        self.elitism_ratio = (kwargs.get('elitism_ratio')
+            if kwargs.get('elitism_ratio') is not None else 0.1)
         
         self.max_iter = kwargs.get('max_iter')
         self.max_iter_wo_improv = kwargs.get('max_iter_wo_improv')
