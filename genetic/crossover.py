@@ -1,7 +1,7 @@
 import numpy as np
 
-def OrderX(parent1 : np.ndarray, parent2 : np.ndarray):
-    lo = np.random.randint(00, len(parent1))
+def OrderX(parent1 : np.ndarray, parent2 : np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    lo = np.random.randint(0, len(parent1))
     hi = np.random.randint(lo, len(parent1))
     
     missing_seq1 = np.asarray([x for x in parent1 if x not in parent2[lo:hi]])

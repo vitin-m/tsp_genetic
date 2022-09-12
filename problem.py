@@ -29,7 +29,7 @@ class TravellingSalesperson():
     def dec_permutation(self, perm : np.ndarray):
         return np.sum([self.edges.get(nat(v1, v2), 0)
                        for v1, v2 in zip(perm, perm[1:])]) +\
-                           self.edges.get(nat(perm[0], perm[-1], 0))
+                           self.edges.get(nat(perm[0], perm[-1]))
     
     def __repr__(self):
         return f'''

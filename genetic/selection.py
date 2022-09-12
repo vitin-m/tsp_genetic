@@ -1,6 +1,7 @@
 import numpy as np
+from typing import Any
 
-def wheel(fit : np.ndarray, amt : int) -> np.ndarray[int]:
+def wheel(fit : np.ndarray, amt : int) -> np.ndarray[Any, int]:
     total_fitness = np.sum(fit)
     individual_prob = fit / total_fitness
     cumulative_prob = np.cumsum(individual_prob)
