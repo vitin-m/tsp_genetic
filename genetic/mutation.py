@@ -7,6 +7,6 @@ def CentreInverseM(individual : np.ndarray, mutation_prob : float) -> np.ndarray
     div = np.random.randint(0, len(individual))
     new_ind = np.zeros_like(individual)
     new_ind[div:] = np.flip(individual[div:])
-    new_ind[:div] = np.flip(individual[:div])
+    new_ind[:div] = (individual[:div])
     
     return new_ind

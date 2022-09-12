@@ -27,6 +27,7 @@ class TravellingSalesperson():
     
     
     def dec_permutation(self, perm : np.ndarray):
+        if len(perm) != self.dimension: print('fufu')
         return np.sum([self.edges.get(nat(v1, v2), 0)
                        for v1, v2 in zip(perm, perm[1:])]) +\
                            self.edges.get(nat(perm[0], perm[-1]))
@@ -143,7 +144,7 @@ def read_graph(filename : str):
 
 
 def main():
-    tsp = TravellingSalesperson(r'instances\test.txt')
+    tsp = TravellingSalesperson(r'instances/test.txt')
     print(tsp)
     # print(tsp.fitness(np.asarray([0, 1, 2])))
     # print(tsp.gen_random_pop(1))

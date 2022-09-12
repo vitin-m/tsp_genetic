@@ -1,6 +1,7 @@
 import numpy as np
 from typing import Callable
 
+from permutation import get_n_idx
 from problem import TravellingSalesperson
 
 class GeneticAlgorithm:
@@ -24,7 +25,7 @@ class GeneticAlgorithm:
             if kwargs.get('crossover_prob') is not None else 0.5)
             
         self.mutation_prob = (kwargs.get('mutation_prob')
-            if kwargs.get('mutation_prob') is not None else 0.01)
+            if kwargs.get('mutation_prob') is not None else 0.1)
             
         self.elitism_ratio = (kwargs.get('elitism_ratio')
             if kwargs.get('elitism_ratio') is not None else 0.1)
@@ -51,7 +52,7 @@ class GeneticAlgorithm:
         self.iter = 0
         self.iter_wo_improv = 0
         
-        self.pop = self.tsp.get_random_pop(100)
+        self.pop = self.tsp.get_random_pop(self.pop_size)
         self.fit = np.asarray([self.tsp.fitness(perm)
                                for perm in self.pop])
         
@@ -61,7 +62,6 @@ class GeneticAlgorithm:
         
         n_crossovers = int((self.crossover_prob * self.pop_size) // 2)
         n_elitism = int(self.elitism_ratio * self.pop_size)
-        
         
         while(not self.should_stop()):            
             temp_fit = list(self.fit[:])
@@ -85,20 +85,20 @@ class GeneticAlgorithm:
                     del temp_fit[idx_parent2 - 1]
                 
                 # Mutation on offsprings
-                offspring1 = self.mutate(offspring1, self.mutation_prob)
-                offspring2 = self.mutate(offspring2, self.mutation_prob)
+                offspring1m = self.mutate(offspring1, self.mutation_prob)
+                offspring2m = self.mutate(offspring2, self.mutation_prob)
                 
-                new_pop.extend([offspring1, offspring2])
+                new_pop.extend([offspring1m, offspring2m])
             
             temp_pop.extend(new_pop)
             temp_pop = np.asarray(temp_pop)
-            temp_pop = np.argpartition(self.pop, n_elitism, axis=1)
+            old_elite = get_n_idx(self.fit, n_elitism)
+            new_weak = get_n_idx(self.fit, n_elitism, False)
             
-            old_elite = np.argpartition(self.pop, -n_elitism, axis=1)[-n_elitism:]
+            for idx_old, idx_new in zip(old_elite, new_weak):
+                temp_pop[idx_new] = self.pop[idx_old]
             
-            temp_pop[:n_elitism] = old_elite
-            
-            self.pop = np.asarray(temp_pop)
+            self.pop = temp_pop[:]
             self.fit = np.asarray([self.tsp.fitness(perm)
                                for perm in self.pop])
             
@@ -106,18 +106,11 @@ class GeneticAlgorithm:
             gbestIdx = self.fit.argmin()
             if self.gbest_fit == self.fit[gbestIdx]:
                 self.iter_wo_improv += 1
+            else:
+                self.iter_wo_improv = 0
             self.gbest_fit = self.fit[gbestIdx]
             self.gbest_pop = self.pop[gbestIdx]
-            
             
             print(f'Iter: {self.iter} -> Best fit: {self.gbest_fit}')
             
             # avaliar pop gerada p/ crossover e mutation?
-    
-
-def main():
-    x = GeneticAlgorithm()
-
-
-if __name__ == '__main__':
-    main()

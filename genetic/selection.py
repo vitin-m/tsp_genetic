@@ -3,7 +3,7 @@ from typing import Any
 
 def wheel(fit : np.ndarray, amt : int) -> np.ndarray[Any, int]:
     total_fitness = np.sum(fit)
-    individual_prob = fit / total_fitness
+    individual_prob = np.flip(fit / total_fitness)
     cumulative_prob = np.cumsum(individual_prob)
     
     idxes = np.searchsorted(cumulative_prob, np.random.random(amt), side='right')
