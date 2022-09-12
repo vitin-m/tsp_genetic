@@ -11,7 +11,8 @@ Teoria:
     - https://www.researchgate.net/publication/345339544_A_Comparison_of_GA_Crossover_and_Mutation_Methods_for_the_Traveling_Salesman_Problem
     - https://www.researchgate.net/figure/The-implementation-of-the-a-OX1-operator-and-b-ER-operator-on-two-parents_fig2_357689680
     - https://www.researchgate.net/figure/Example-of-Daviss-order-crossover_fig1_220672768
-    - 
+    - https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=8426051
+    - https://sci-hub.se/https://doi.org/10.1007/s10732-006-9001-3
 - Problemas:
   - http://vrp.atd-lab.inf.puc-rio.br/attachments/article/6/TSPLIB%2095.pdf
   - https://github.com/pdrozdowski/TSPLib.Net/blob/master/TSPLIB95/tsp/

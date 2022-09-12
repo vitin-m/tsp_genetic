@@ -54,18 +54,23 @@ class GeneticAlgorithm:
         self.iter_wo_improv = 0
         
         self.pop = self.tsp.gen_random_pop(100)
+        self.fit = np.asarray([self.tsp.fitness(perm)
+                               for perm in self.pop])
+        
+        gbestIdx = self.fit.argmin()
+        self.gbest_fit = self.fit[gbestIdx]
+        self.gbest_pop = self.pop[gbestIdx]
         
         n_crossovers = (self.crossover_prob * self.pop_size) // 2
         n_elitism = self.elitism_ratio * self.pop_size
         
         
         while(not self.should_stop()):
-            # Get fitness
-            self.fit = np.asarray([self.tsp.fitness(perm)
-                               for perm in self.pop])
+            # Get elite (implementar)
+            # elite = np.argpartition(self.pop, -n_elitism, axis=1)[-n_elitism:]
             
-            temp_fit = self.fit[:]
-            temp_pop = self.pop[:]
+            temp_fit = list(self.fit[:])
+            temp_pop = list(self.pop[:])
             new_pop = list()
             for _ in range(n_crossovers):
                 # Selection
@@ -73,16 +78,28 @@ class GeneticAlgorithm:
                 
                 # Crossover w/ replacement
                 offspring1, offspring2 = self.crossover(temp_pop[idx_parent1], temp_pop[idx_parent2])
-                temp_pop.delete([idx_parent1, idx_parent2])
-                temp_fit.delete([idx_parent1, idx_parent2])
+                
+                del temp_pop[idx_parent1]
+                del temp_pop[idx_parent2]
+                
+                del temp_fit[idx_parent1]
+                del temp_fit[idx_parent2]
                 
                 # Mutation on offsprings
-                offspring1 = self.mutate(offspring1)
-                offspring2 = self.mutate(offspring2)
+                offspring1 = self.mutate(offspring1, self.mutation_prob)
+                offspring2 = self.mutate(offspring2, self.mutation_prob)
                 
                 new_pop.append([offspring1, offspring2])
-                #implementar elitismo
             
+            temp_pop.append(new_pop)
+            
+            self.pop = np.asarray(temp_pop)
+            self.fit = np.asarray([self.tsp.fitness(perm)
+                               for perm in self.pop])
+            
+            gbestIdx = self.fit.argmin()
+            self.gbest_fit = self.fit[gbestIdx]
+            self.gbest_pop = self.pop[gbestIdx]
             
             # avaliar pop gerada p/ crossover e mutation?
     
