@@ -15,6 +15,7 @@ class TravellingSalesperson():
         self.encoding = encoding
         
         if self.encoding == 'permutation':
+            self.get_edges = self.dec_permutation
             self.fitness = self.get_fitness_permutation
             self.get_random_pop = self.random_pop_permutation
             self.is_valid = self.is_valid_permutation
@@ -31,10 +32,10 @@ class TravellingSalesperson():
                 pop[i] = np.random.permutation(self.dimension)
         
         return pop
-    
-    
-    def dec_permutation(self, perm : np.ndarray, fix : Any = None):
-        pass
+
+
+    def dec_permutation(self, perm : np.ndarray):
+        return [(perm[i - 1], perm[i]) for i in range(1, len(perm))]
     
     
     def get_fitness_permutation(self, perm : np.ndarray, fix : Any = None):

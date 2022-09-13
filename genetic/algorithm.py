@@ -2,7 +2,7 @@ import numpy as np
 from typing import Callable
 from rich import print
 
-from viewer import Viewer, get_positions, get_edges
+from viewer import Viewer
 from permutation import get_n_idx
 from problem import TravellingSalesperson
 
@@ -164,10 +164,10 @@ class GeneticAlgorithm:
             self.gbest_pop = self.pop[gbestIdx]
             # self.pop_hist.append(self.pop)
             
-            self.edges_hist.append(get_edges(self.gbest_pop))
+            self.edges_hist.append(self.tsp.get_edges(self.gbest_pop))
             self.fit_hist.append(self.gbest_fit)
             
-            print(f'Iter: {self.iter} -> Best fit: {self.gbest_fit}')
+            print(f'[bold red]Iter: {self.iter}[/bold red] -> Best fit: {self.gbest_fit}')
         
         pos = { idx : (p[0], p[1]) for idx, p in enumerate(self.tsp.vertexes) }
         view = Viewer(self.fit_hist, self.edges_hist, self.tsp.dimension, self.edges_hist, self.iter, pos)
