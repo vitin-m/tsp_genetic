@@ -9,6 +9,8 @@ class Viewer:
     def __init__(
         self,
         gbests: np.ndarray,
+        mean_fits: np.ndarray,
+        std_devs: np.ndarray,
         dimension: int,
         edges: np.ndarray,
         iter: int,
@@ -17,6 +19,8 @@ class Viewer:
         graph = nx.Graph()
         graph.add_nodes_from([x for x in range(dimension)])
         
+        self.std_devs = std_devs
+        self.mean_fits = mean_fits
         self.gbests = gbests
         self.graph = graph
         self.edges = edges
@@ -32,9 +36,10 @@ class Viewer:
         self.ax_graphics = self.fig.add_subplot(self.axgrid[:, 0:1])
 
         self.ax_graphics.set_xlim(0, self.frames)
-        self.ax_graphics.set_ylim(0, 1.2 * max(self.gbests))
+        self.ax_graphics.set_ylim(0, 1.2 * max(self.mean_fits))
         (self.line_gbest,) = self.ax_graphics.plot(0, 0)
-        #(self.line_mean,) = self.ax_graphics.plot(0, 0)
+        (self.line_mean,) = self.ax_graphics.plot(0, 0)
+        (self.line_std,) = self.ax_graphics.plot(0, 0)
 
         self.ann = AnchoredText("", prop=dict(size=10), frameon=True, loc=2)
         self.ax_graphics.add_artist(self.ann)
@@ -45,12 +50,17 @@ class Viewer:
         self.ax_graph.clear()
         self.graph.remove_edges_from(list(self.graph.edges))
         iter = list(range(i))
-        self.ann.txt.set_text(f"Generation:{i}\nCurrent Best Fitness: {self.gbests[i]}")
+        self.ann.txt.set_text(f'Generation:{i}\n'
+                              f'Current Best Fitness: {self.gbests[i]}\n'
+                              f'Current Mean Fitness: {self.mean_fits[i]:.1f}')
         self.line_gbest.set_xdata(iter)
         self.line_gbest.set_ydata(list(self.gbests[:i]))
 
-        #self.line_mean.set_xdata(iter)
-        #self.line_mean.set_ydata(list(self.mean_fitness[:i]))
+        self.line_mean.set_xdata(iter)
+        self.line_mean.set_ydata(list(self.mean_fits[:i]))
+        
+        self.line_std.set_xdata(iter)
+        self.line_std.set_ydata(list(self.std_devs[:i]))
         #edges = self.edges[randint(0,1)]
 
         edges = self.edges[i]

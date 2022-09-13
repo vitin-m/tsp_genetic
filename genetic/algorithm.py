@@ -77,6 +77,8 @@ class GeneticAlgorithm:
         # self.pop_hist = [self.pop]
         self.fit_hist = []
         self.edges_hist = []
+        self.mean_fit_hist = []
+        self.stdeviation_hist = []
         
         gbestIdx = self.fit.argmin()
         self.gbest_fit = self.fit[gbestIdx]
@@ -164,15 +166,24 @@ class GeneticAlgorithm:
                 self.iter_wo_improv += 1
             else:
                 self.iter_wo_improv = 0
+            
+            self.mean_fit_hist.append(np.mean(self.fit))
+            self.stdeviation_hist.append(np.sqrt(np.sum((self.fit - self.mean_fit_hist[self.iter - 1])**2) / len(self.fit)))
             self.gbest_fit = self.fit[gbestIdx]
             self.gbest_pop = self.pop[gbestIdx]
             # self.pop_hist.append(self.pop)
-            
+            print(self.stdeviation_hist[self.iter - 1])
             self.edges_hist.append(self.tsp.get_edges(self.gbest_pop))
             self.fit_hist.append(self.gbest_fit)
             
             print(f'[bold red]Iter: {self.iter}[/bold red] -> Best fit: {self.gbest_fit}')
         
         pos = { idx : (p[0], p[1]) for idx, p in enumerate(self.tsp.vertexes) }
-        view = Viewer(self.fit_hist, self.tsp.dimension, self.edges_hist, self.iter, pos)
+        view = Viewer(self.fit_hist,
+                      self.mean_fit_hist,
+                      self.stdeviation_hist,
+                      self.tsp.dimension,
+                      self.edges_hist,
+                      self.iter, pos
+                      )
         view.show()
