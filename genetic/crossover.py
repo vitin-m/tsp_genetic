@@ -24,9 +24,24 @@ def OrderX(parent1 : np.ndarray, parent2 : np.ndarray) -> tuple[np.ndarray, np.n
     return offspring1, offspring2
 
 
+def PartiallyMappedX(parent1 : np.ndarray, parent2 : np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    mi = np.random.randint(1, len(parent1) - 1)
+    
+    offspring1 = parent1.copy()
+    offspring2 = parent2.copy()
+    
+    for i in range(mi):
+        offspring1[offspring1 == parent2[i]] = offspring1[i]
+        offspring2[offspring2 == parent1[i]] = offspring2[i]
+        offspring1[i] = parent2[i]
+        offspring2[i] = parent1[i]
+        
+    return offspring1, offspring2
+
+
 def main():
     p1, p2 = np.asarray([1,3,4,2]), np.asarray([4,3,2,1])
-    print(OrderX(p1, p2))
+    print(PartiallyMappedX(p1, p2))
 
 
 if __name__ == '__main__':

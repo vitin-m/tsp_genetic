@@ -9,7 +9,6 @@ class Viewer:
     def __init__(
         self,
         gbests: np.ndarray,
-        mean_fitness: np.ndarray,
         dimension: int,
         edges: np.ndarray,
         iter: int,
@@ -19,7 +18,6 @@ class Viewer:
         graph.add_nodes_from([x for x in range(dimension)])
         
         self.gbests = gbests
-        self.mean_fitness = mean_fitness
         self.graph = graph
         self.edges = edges
         self.positions = (self.get_positions(dimension, 1)

@@ -115,11 +115,15 @@ class GeneticAlgorithm:
                     if np.any(offspring2 != offspring2m):
                         print(f'{offspring2} [blue]/[/blue] {offspring2m}')
                 
-                if self.out_of_bounds_fix == 'regenerate':
-                    if not self.tsp.is_valid(offspring1m) or not self.tsp.is_valid(offspring2m):
+                if not self.tsp.is_valid(offspring1m) or not self.tsp.is_valid(offspring2m):
+                    if self.out_of_bounds_fix == 'regenerate':
                         if self.verbose:
                             print('Solutions out of bounds. Regenerating...')
                         continue
+                    if self.out_of_bounds_fix == 'randomize':
+                        if self.verbose:
+                            print('Solutions out of bounds. Randomizing new ones...')
+                        offspring1m, offspring2m = tuple(self.tsp.get_random_pop(2))
                 
                 if self.crossover_with_replacement:
                     del temp_pop[idx_parent1]
@@ -170,5 +174,5 @@ class GeneticAlgorithm:
             print(f'[bold red]Iter: {self.iter}[/bold red] -> Best fit: {self.gbest_fit}')
         
         pos = { idx : (p[0], p[1]) for idx, p in enumerate(self.tsp.vertexes) }
-        view = Viewer(self.fit_hist, self.edges_hist, self.tsp.dimension, self.edges_hist, self.iter, pos)
+        view = Viewer(self.fit_hist, self.tsp.dimension, self.edges_hist, self.iter, pos)
         view.show()
