@@ -2,25 +2,23 @@ from problem import TravellingSalesperson
 from genetic.algorithm import GeneticAlgorithm
 from genetic.selection import wheel
 from genetic.crossover import OrderX
-from genetic.mutation import CentreInverseM
+from genetic.mutation import CentreInverseM, DisplacementM, ExchangeM
 
-tsp = TravellingSalesperson('instances/test.txt')
-# print(tsp.fitness([
-#     1, 28, 6, 12, 9, 26,
-#     3, 29, 5, 21, 2, 20,
-#     10, 4, 15, 18, 14,
-#     17, 22, 11, 19, 25,
-#     7, 23, 8, 16, 13, 24,
-# ]))
+tsp = TravellingSalesperson(r'instances/test_trab.tsp')
+
 algorithm = GeneticAlgorithm(
     tsp,
     wheel,
     OrderX,
     CentreInverseM,
-    pop_size=300,
-    elitism_ratio=0.25,
-    max_iter=200,
-    # max_iter_wo_improv=50,
+    crossover_with_replacement=True,
+    out_of_bounds_fix='regenerate',  # 'ignore', 'regenerate', 'randomize', 'penalize'
+    pop_size=10,
+    crossover_prob=0.70,
+    mutation_prob=0.25,
+    elitism_ratio=0.10,
+    max_iter=1000,
+    max_iter_wo_improv=200,
 )
 
 algorithm.run()

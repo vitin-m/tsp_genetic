@@ -1,0 +1,15 @@
+NAME: prof5
+TYPE: TSP
+COMMENT: 5 nodos de teste p/ problema do caixeiro viajante
+DIMENSION: 5
+EDGE_WEIGHT_TYPE: EXPLICIT
+EDGE_DATA_FORMAT: EDGE_LIST 
+EDGE_DATA_SECTION
+1 2 2
+1 4 3
+1 5 6
+2 4 3
+2 3 4
+3 4 7
+3 5 3
+4 5 3

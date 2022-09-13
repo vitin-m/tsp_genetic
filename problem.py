@@ -1,5 +1,5 @@
-from typing import Iterable
 import numpy as np
+from typing import Any, Iterable
 
 from permutation import natural_ordering_pair as nat
 
@@ -17,20 +17,36 @@ class TravellingSalesperson():
         if self.encoding == 'permutation':
             self.fitness = self.dec_permutation
             self.get_random_pop = self.random_pop_permutation
+            self.is_valid = self.is_valid_permutation
         else: 
             raise ValueError(f'Encoding {encoding} not available.')
     
     
     def random_pop_permutation(self, size : int) -> np.ndarray:
-        return np.asarray([np.random.permutation(len(self.vertexes)) 
+        pop = np.asarray([np.random.permutation(self.dimension) 
                           for _ in range(size)])
+        
+        for i in range(len(pop)):
+            while not self.is_valid(pop[i]):
+                pop[i] = np.random.permutation(self.dimension)
+        
+        return pop
     
     
-    def dec_permutation(self, perm : np.ndarray):
-        if len(perm) != self.dimension: print('fufu')
-        return np.sum([self.edges.get(nat(v1, v2), 0)
-                       for v1, v2 in zip(perm, perm[1:])]) +\
-                           self.edges.get(nat(perm[0], perm[-1]))
+    def dec_permutation(self, perm : np.ndarray, fix : Any = None):
+        return np.sum([self.edges.get(nat(v1, v2), fix)
+            for v1, v2 in zip(perm, perm[1:])])
+    
+    
+    def is_valid_permutation(self, perm : np.ndarray) -> bool:
+        if len(perm) != self.dimension: return False
+        
+        weights = np.asarray([self.edges.get(nat(v1, v2), None)
+            for v1, v2 in zip(perm, perm[1:])])
+            
+        if np.any(weights == None): return False
+        return True
+    
     
     def __repr__(self):
         return f'''
@@ -79,14 +95,17 @@ def read_graph(filename : str):
         if 'DIMENSION' in ln: dimension = int(ln.split()[1])
         
         for lnl in fr:
-            if 'EDGE_WEIGHT_TYPE' in lnl: edge_weight_type = lnl.split()[1]
+            if 'EDGE_DATA_FORMAT' in lnl: edge_data_format = lnl.split()[-1]
+            if 'EDGE_WEIGHT_TYPE' in lnl: edge_weight_type = lnl.split()[-1]
             if 'EDGE_WEIGHT_FORMAT' in lnl:
                 if lnl.split()[1] not in supported_formats: 
                     raise ValueError('Edge weight format not supported')
                 edge_weight_format = lnl.split()[1]
-            if 'DISPLAY_DATA_TYPE' in lnl: display_data_type = lnl.split()[1]
-            if 'NODE_COORD_TYPE' in lnl: node_coord_type = lnl.split()[1]
-            if 'NODE_COORD_SECTION' in lnl or 'EDGE_WEIGHT_SECTION' in lnl: 
+            if 'DISPLAY_DATA_TYPE' in lnl: display_data_type = lnl.split()[-1]
+            if 'NODE_COORD_TYPE' in lnl: node_coord_type = lnl.split()[-1]
+            if ('NODE_COORD_SECTION' in lnl or
+                'EDGE_WEIGHT_SECTION' in lnl or
+                'EDGE_DATA_SECTION' in lnl): 
                 ln = lnl
                 break
         
@@ -109,17 +128,6 @@ def read_graph(filename : str):
                 
             return vertexes
             
-        if 'NODE_COORD_SECTION' in ln:
-            if node_coord_type == 'TWOD_COORDS':
-                vertexes = readvertexes(2)
-            
-            if node_coord_type == 'THREED_COORDS':
-                vertexes = readvertexes(3)
-            
-            for v1 in range(len(vertexes)):
-                for v2 in range(v1 + 1, len(vertexes)):
-                    edges[nat(v1, v2)] = weight_func(vertexes[v1], vertexes[v2])
-            
         if 'EDGE_WEIGHT_SECTION' in ln:
             if edge_weight_format == 'FULL_MATRIX':
                 for nline, lnl in enumerate(fr):
@@ -139,12 +147,31 @@ def read_graph(filename : str):
                     vertexes = readvertexes(3)
             
             out_vertexes = vertexes
-    
+        
+        if 'EDGE_DATA_SECTION' in ln:
+            if edge_data_format == 'EDGE_LIST':
+                for lnl in fr:
+                    v1, v2, p = lnl.split()
+                    edges[(int(v1) - 1, int(v2) - 1)] = float(p)
+                out_vertexes = None
+        
+        if 'NODE_COORD_SECTION' in ln:
+            if node_coord_type == 'TWOD_COORDS':
+                vertexes = readvertexes(2)
+            
+            if node_coord_type == 'THREED_COORDS':
+                vertexes = readvertexes(3)
+            
+            if edge_weight_type == 'FUNCTION': 
+                for v1 in range(len(vertexes)):
+                    for v2 in range(v1 + 1, len(vertexes)):
+                        edges[nat(v1, v2)] = weight_func(vertexes[v1], vertexes[v2])
+        
     return name, comment, dimension, out_vertexes, edges
 
 
 def main():
-    tsp = TravellingSalesperson(r'instances/test.txt')
+    tsp = TravellingSalesperson(r'instances/test_trab.tsp')
     print(tsp)
     # print(tsp.fitness(np.asarray([0, 1, 2])))
     # print(tsp.gen_random_pop(1))
