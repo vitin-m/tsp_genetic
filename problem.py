@@ -15,7 +15,7 @@ class TravellingSalesperson():
         self.encoding = encoding
         
         if self.encoding == 'permutation':
-            self.fitness = self.dec_permutation
+            self.fitness = self.get_fitness_permutation
             self.get_random_pop = self.random_pop_permutation
             self.is_valid = self.is_valid_permutation
         else: 
@@ -34,6 +34,10 @@ class TravellingSalesperson():
     
     
     def dec_permutation(self, perm : np.ndarray, fix : Any = None):
+        pass
+    
+    
+    def get_fitness_permutation(self, perm : np.ndarray, fix : Any = None):
         return np.sum([self.edges.get(nat(v1, v2), fix)
             for v1, v2 in zip(perm, perm[1:])])
     
@@ -71,7 +75,7 @@ def read_graph(filename : str):
     supported_formats = ('FUNCTION', 'FULL_MATRIX')
     edge_data_format = ''  # EDGE_LIST, ADJ_LIST
     node_coord_type = 'TWOD_COORDS'  # NO_COORDS, TWOD_COORDS, THREED_COORDS
-    display_data_type = 'NO_DISPLAY'
+    display_data_type = 'TWOD_DISPLAY'
     
     def euclidean(p1 : Iterable, p2 : Iterable) -> float:
         return np.sqrt(np.sum((n2 - n1) ** 2 for n1, n2 in zip(p1, p2)))
@@ -138,22 +142,27 @@ def read_graph(filename : str):
                     for idx in range(nline):
                         cols = lnl.split()
                         edges[nat(idx, nline)] = float(cols[idx])
-
-            if 'DISPLAY_DATA_SECTION' in ln:
-                if display_data_type == 'TWOD_DISPLAY':
-                    vertexes = readvertexes(2)
-                        
-                elif display_data_type == 'THREED_DISPLAY':
-                    vertexes = readvertexes(3)
-            
-            out_vertexes = vertexes
         
         if 'EDGE_DATA_SECTION' in ln:
             if edge_data_format == 'EDGE_LIST':
                 for lnl in fr:
+                    if 'EOF' in lnl or 'DISPLAY_DATA_SECTION' in lnl: 
+                        ln = lnl
+                        break
                     v1, v2, p = lnl.split()
                     edges[(int(v1) - 1, int(v2) - 1)] = float(p)
-                out_vertexes = None
+                
+        
+        if 'DISPLAY_DATA_SECTION' in ln:
+            print('aq')
+            if display_data_type == 'TWOD_DISPLAY':
+                vertexes = readvertexes(2)
+                    
+            elif display_data_type == 'THREED_DISPLAY':
+                vertexes = readvertexes(3)
+            
+            out_vertexes = vertexes
+        
         
         if 'NODE_COORD_SECTION' in ln:
             if node_coord_type == 'TWOD_COORDS':

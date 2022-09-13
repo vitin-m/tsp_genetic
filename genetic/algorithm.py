@@ -1,6 +1,8 @@
 import numpy as np
 from typing import Callable
+from rich import print
 
+from viewer import Viewer, get_positions, get_edges
 from permutation import get_n_idx
 from problem import TravellingSalesperson
 
@@ -40,6 +42,9 @@ class GeneticAlgorithm:
         self.max_iter = kwargs.get('max_iter')
         self.max_iter_wo_improv = kwargs.get('max_iter_wo_improv')
         
+        self.verbose = (kwargs.get('verbose')
+            if kwargs.get('verbose') is not None else False)
+        
         if self.max_iter_wo_improv is None:
             if self.max_iter is None: self.max_iter = 100
             self.should_stop = self.max_iter_stop
@@ -56,6 +61,8 @@ class GeneticAlgorithm:
             self.iter >= self.max_iter
     
     def run(self):
+        print(f'Solving {self.tsp}\n')
+        
         self.iter = 0
         self.iter_wo_improv = 0
         
@@ -67,14 +74,16 @@ class GeneticAlgorithm:
         self.fit = self.fit[sort]
         self.pop = self.pop[sort]
         
-        self.pop_hist = [self.pop]
+        # self.pop_hist = [self.pop]
+        self.fit_hist = []
+        self.edges_hist = []
         
         gbestIdx = self.fit.argmin()
         self.gbest_fit = self.fit[gbestIdx]
         self.gbest_pop = self.pop[gbestIdx]
         
-        n_crossovers = int((self.crossover_prob * self.pop_size))
-        n_elitism = int(self.elitism_ratio * self.pop_size)
+        n_crossovers = int(np.ceil((self.crossover_prob * self.pop_size)))
+        n_elitism = int(np.ceil(self.elitism_ratio * self.pop_size))
         
         while(not self.should_stop()):            
             temp_fit = list(self.fit[:])
@@ -85,25 +94,31 @@ class GeneticAlgorithm:
             while Xcount < n_crossovers:
                 # Selection
                 idx_parent1, idx_parent2 = self.select(temp_fit, 2)
-                
-                if np.any(temp_pop[idx_parent1] is None) or np.any(temp_pop[idx_parent2] is None):
-                    print('Selection miss')
+                if self.verbose:
+                    print(f'[bold green]Selected:[/bold green]' 
+                          f'{self.pop[idx_parent1]} [green]&[/green] {self.pop[idx_parent2]}')
                 
                 # Crossover w/ replacement
                 offspring1, offspring2 = self.crossover(temp_pop[idx_parent1], temp_pop[idx_parent2])
-                
-                if np.any(offspring1 is None) or np.any(offspring2 is None):
-                    print('Crossover miss')
+                if self.verbose:
+                    print(f'[bold blue]Crossover:[/bold blue]\n' 
+                          f'{self.pop[idx_parent1]} [blue]X[/blue] {self.pop[idx_parent2]} =>\n'
+                          f'{offspring1} & {offspring2}')
                 
                 # Mutation on offsprings
                 offspring1m = self.mutate(offspring1, self.mutation_prob)
                 offspring2m = self.mutate(offspring2, self.mutation_prob)
-                
-                if np.any(offspring1m is None) or np.any(offspring2m is None):
-                    print('Mutation miss')
+                if self.verbose:
+                    print(f'[bold blue]Mutation:[/bold blue]')
+                    if np.any(offspring1 != offspring1m):
+                        print(f'{offspring1} [blue]/[/blue] {offspring1m}')
+                    if np.any(offspring2 != offspring2m):
+                        print(f'{offspring2} [blue]/[/blue] {offspring2m}')
                 
                 if self.out_of_bounds_fix == 'regenerate':
                     if not self.tsp.is_valid(offspring1m) or not self.tsp.is_valid(offspring2m):
+                        if self.verbose:
+                            print('Solutions out of bounds. Regenerating...')
                         continue
                 
                 if self.crossover_with_replacement:
@@ -147,6 +162,13 @@ class GeneticAlgorithm:
                 self.iter_wo_improv = 0
             self.gbest_fit = self.fit[gbestIdx]
             self.gbest_pop = self.pop[gbestIdx]
-            self.pop_hist.append(self.pop)
+            # self.pop_hist.append(self.pop)
+            
+            self.edges_hist.append(get_edges(self.gbest_pop))
+            self.fit_hist.append(self.gbest_fit)
             
             print(f'Iter: {self.iter} -> Best fit: {self.gbest_fit}')
+        
+        pos = { idx : (p[0], p[1]) for idx, p in enumerate(self.tsp.vertexes) }
+        view = Viewer(self.fit_hist, self.edges_hist, self.tsp.dimension, self.edges_hist, self.iter, pos)
+        view.show()
