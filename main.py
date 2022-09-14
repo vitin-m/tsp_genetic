@@ -1,4 +1,4 @@
-from problem import TravellingSalesperson
+from genetic.problem import TravellingSalesperson
 from genetic.algorithm import GeneticAlgorithm
 from genetic.selection import wheel
 from genetic.crossover import OrderX, PartiallyMappedX

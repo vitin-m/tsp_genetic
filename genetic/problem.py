@@ -1,7 +1,7 @@
 import numpy as np
 from typing import Any, Iterable
 
-from permutation import natural_ordering_pair as nat
+from utils.permutation import natural_ordering_pair as nat
 
 class TravellingSalesperson():
     def __init__(

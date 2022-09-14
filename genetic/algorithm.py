@@ -2,9 +2,9 @@ import numpy as np
 from typing import Callable
 from rich import print
 
-from viewer import Viewer
-from permutation import get_n_idx
-from problem import TravellingSalesperson
+from utils.viewer import Viewer
+from utils.permutation import get_n_idx
+from genetic.problem import TravellingSalesperson
 
 class GeneticAlgorithm:
     def __init__(
